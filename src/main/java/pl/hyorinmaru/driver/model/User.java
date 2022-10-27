@@ -1,6 +1,8 @@
 package pl.hyorinmaru.driver.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,9 +14,10 @@ import javax.persistence.Id;
 import java.util.Collection;
 
 @Entity
+@NoArgsConstructor
 @Getter
 @Setter
-public class AppUser implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +27,7 @@ public class AppUser implements UserDetails {
 
     private String password;
 
-    public AppUser() {
-    }
-
-    public AppUser(String email, String password) {
+    public User(String email, String password) {
         this.email = email;
         this.password = password;
     }
@@ -35,11 +35,6 @@ public class AppUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -69,10 +64,11 @@ public class AppUser implements UserDetails {
 
     @Override
     public String toString() {
-        return "AppUser{" +
+        return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }
 }
+

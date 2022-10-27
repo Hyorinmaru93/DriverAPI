@@ -1,8 +1,5 @@
 package pl.hyorinmaru.driver.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class AuthRequest {
 
     private String email;
@@ -23,5 +20,4 @@ public class AuthRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

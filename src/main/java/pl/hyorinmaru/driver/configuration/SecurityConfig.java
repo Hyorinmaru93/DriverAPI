@@ -7,34 +7,21 @@ import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import pl.hyorinmaru.driver.model.AppUser;
-import pl.hyorinmaru.driver.repository.AppUserRepository;
+import pl.hyorinmaru.driver.model.User;
+import pl.hyorinmaru.driver.repository.UserRepo;
 
 @Configuration
 public class SecurityConfig {
 
-    private AppUserRepository appUserRepository;
+    private UserRepo userRepo;
 
-    public SecurityConfig(AppUserRepository appUserRepository) {
-        this.appUserRepository = appUserRepository;
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
-                .anyRequest().authenticated()
-                .and().build();
+    public SecurityConfig(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
     @Bean
@@ -47,15 +34,25 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    //ToRefactor
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .and().build();
+    }
+
     @EventListener(ApplicationReadyEvent.class)
-    public void saveUser() {
-        AppUser appUser = new AppUser("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
-        appUserRepository.save(appUser);
+    public void createUser() {
+        User user = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
+        userRepo.save(user);
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> appUserRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException(String.format("User with %s not found", username)));
+    public UserDetailsService userDetailsService(){
+        return username -> userRepo.findByEmail(username).orElseThrow(() ->
+                new UsernameNotFoundException("User with email not found: " + username)
+        );
     }
 }
