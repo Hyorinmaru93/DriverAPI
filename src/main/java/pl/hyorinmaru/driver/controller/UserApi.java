@@ -11,14 +11,17 @@ import pl.hyorinmaru.driver.dto.AuthRequest;
 import pl.hyorinmaru.driver.model.AppUser;
 
 @RestController
-@RequiredArgsConstructor
 public class UserApi {
 
     private final AuthenticationManager authenticationManager;
 
+    public UserApi(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
     @PostMapping("/auth/login")
     public String getJwt(@RequestBody AuthRequest authRequest){
-
+        System.out.println("Cokolwiek");
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getEmail()));
 
         AppUser principal = (AppUser) authenticate.getPrincipal();
