@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.hyorinmaru.driver.filter.JwtTokenFilter;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.repository.UserRepo;
@@ -35,7 +36,9 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
                 .anyRequest().authenticated()
-                .and().build();
+                .and()
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
     @Bean

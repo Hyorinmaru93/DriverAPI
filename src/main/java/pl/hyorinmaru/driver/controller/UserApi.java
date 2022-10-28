@@ -36,7 +36,7 @@ public class UserApi {
             Algorithm algorithm = Algorithm.HMAC256("secret");
             String token = JWT.create()
                     .withSubject(principal.getUsername())
-                    .withIssuer("Łukasz Jeliński")
+                    .withIssuer("Hyorinmaru")
                     .withClaim("isAdmin", true)
                     .sign(algorithm);
             AuthResponse authResponse = new AuthResponse(principal.getUsername(), token);
