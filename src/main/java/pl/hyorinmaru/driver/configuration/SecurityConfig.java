@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import pl.hyorinmaru.driver.filter.JwtTokenFilter;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.repository.UserRepo;
 
@@ -23,9 +24,7 @@ public class SecurityConfig {
 
     private final UserRepo userRepo;
 
-//    private final JwtTokenFilter jwtTokenFilter;
-
-
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
