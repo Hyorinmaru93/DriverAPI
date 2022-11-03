@@ -18,7 +18,7 @@ public class RoleService {
     }
 
     public Role readRoleByName(String name){
-        return roleRepo.findByName(name).orElse(roleRepo.findByName("USER").get());
+        return roleRepo.findByName(name).orElse(roleRepo.findByName("ROLE_USER").get());
     }
 
 }

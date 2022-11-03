@@ -20,6 +20,7 @@ import pl.hyorinmaru.driver.model.Role;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.repository.UserRepo;
 import pl.hyorinmaru.driver.service.RoleService;
+import pl.hyorinmaru.driver.service.UserService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,8 @@ import java.util.Set;
 public class SecurityConfig {
 
     private final UserRepo userRepo;
+
+    private final UserService userService;
 
     private final JwtTokenFilter jwtTokenFilter;
 
@@ -69,22 +72,17 @@ public class SecurityConfig {
     public void createUser() {
 
         Role user = new Role();
-        user.setName("user");
+        user.setName("ROLE_USER");
         Role admin = new Role();
-        admin.setName("admin");
+        admin.setName("ROLE_ADMIN");
         roleService.create(user);
         roleService.create(admin);
 
-        Set<Role> roles = new HashSet<>();
-        roles.add(user);
+        User user1 = new User("pendrakar@gmail.com", getBCryptPasswordEncoder().encode("user123"));
+        userService.create(user1);
 
-        User user1 = new User("pendrakar@gmail.com", getBCryptPasswordEncoder().encode("user123"), roles);
-        userRepo.save(user1);
-
-        roles.add(admin);
-
-        User user2 = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"), roles);
-        userRepo.save(user2);
+        User user2 = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
+        userService.create(user2);
 
     }
 
