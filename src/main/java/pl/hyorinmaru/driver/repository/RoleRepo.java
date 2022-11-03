@@ -7,8 +7,6 @@ import pl.hyorinmaru.driver.model.Role;
 
 import java.util.Optional;
 
-@Repository
-@Transactional
 public interface RoleRepo extends JpaRepository<Role, Long> {
 
     Optional<Role> findByName(String name);
