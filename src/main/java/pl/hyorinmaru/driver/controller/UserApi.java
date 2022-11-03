@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.hyorinmaru.driver.dto.AuthRequest;
 import pl.hyorinmaru.driver.dto.AuthResponse;
 import pl.hyorinmaru.driver.model.User;
+
+import java.util.stream.Collectors;
 
 @RestController
 public class UserApi {
@@ -37,7 +40,7 @@ public class UserApi {
             String token = JWT.create()
                     .withSubject(principal.getUsername())
                     .withIssuer("Hyorinmaru")
-                    .withClaim("isAdmin", true)
+                    .withClaim("isAdmin", principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
             AuthResponse authResponse = new AuthResponse(principal.getUsername(), token);
             return ResponseEntity.ok(authResponse);
