@@ -34,15 +34,15 @@ public class UserApi {
             Authentication authenticate = authorizationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
-            User principal = (User) authenticate.getPrincipal();
+            User user = (User) authenticate.getPrincipal();
 
             Algorithm algorithm = Algorithm.HMAC256("secret");
             String token = JWT.create()
-                    .withSubject(principal.getUsername())
+                    .withSubject(user.getUsername())
                     .withIssuer("Hyorinmaru")
-                    .withClaim("isAdmin", principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
+                    .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                     .sign(algorithm);
-            AuthResponse authResponse = new AuthResponse(principal.getUsername(), token);
+            AuthResponse authResponse = new AuthResponse(user.getUsername(), token);
             return ResponseEntity.ok(authResponse);
 
 

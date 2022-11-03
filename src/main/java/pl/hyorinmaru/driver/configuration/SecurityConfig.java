@@ -72,17 +72,33 @@ public class SecurityConfig {
     public void createUser() {
 
         Role user = new Role();
-        user.setName("ROLE_USER");
+        user.setName(Role.Type.ROLE_USER);
         Role admin = new Role();
-        admin.setName("ROLE_ADMIN");
+        admin.setName(Role.Type.ROLE_ADMIN);
         roleService.create(user);
         roleService.create(admin);
 
-        User user1 = new User("pendrakar@gmail.com", getBCryptPasswordEncoder().encode("user123"));
+//        User user1 = new User("pendrakar@gmail.com", getBCryptPasswordEncoder().encode("user123"));
+
+        User user1 = User.builder()
+                .email("pendrakar@gmail.com")
+                .password(getBCryptPasswordEncoder().encode("user123"))
+                .build();
+        userRepo.save(user1);
+
+        Role role = roleService.readRoleByName("ROLE_USER");
+        System.out.println(role);
+
+        user1.setRoles(Set.of(role));
+
         userService.create(user1);
 
-        User user2 = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
-        userService.create(user2);
+//        userRepo.save(user1);
+//        userService.create(user1);
+
+//        User user2 = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
+//        userRepo.save(user2);
+//        userService.create(user2);
 
     }
 

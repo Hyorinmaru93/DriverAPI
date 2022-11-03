@@ -1,24 +1,22 @@
 package pl.hyorinmaru.driver.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pl.hyorinmaru.driver.service.RoleService;
 
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NoArgsConstructor
+@Table(name = "users")
+@Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -42,7 +40,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         roles.forEach(r ->
-                grantedAuthorities.add(new SimpleGrantedAuthority(r.getName())));
+                grantedAuthorities.add(new SimpleGrantedAuthority(r.getName().toString())));
         return grantedAuthorities;
     }
 
