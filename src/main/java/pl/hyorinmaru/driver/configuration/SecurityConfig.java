@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
+                .antMatchers("/hej").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
@@ -78,27 +79,23 @@ public class SecurityConfig {
         roleService.create(user);
         roleService.create(admin);
 
-//        User user1 = new User("pendrakar@gmail.com", getBCryptPasswordEncoder().encode("user123"));
-
         User user1 = User.builder()
                 .email("pendrakar@gmail.com")
                 .password(getBCryptPasswordEncoder().encode("user123"))
                 .build();
-        userRepo.save(user1);
-
-        Role role = roleService.readRoleByName("ROLE_USER");
-        System.out.println(role);
-
-        user1.setRoles(Set.of(role));
-
         userService.create(user1);
 
-//        userRepo.save(user1);
-//        userService.create(user1);
+        user1.setRoles(Set.of(roleService.readRoleById(1L)));
+        userService.create(user1);
 
-//        User user2 = new User("jelinski@gmail.com", getBCryptPasswordEncoder().encode("admin123"));
-//        userRepo.save(user2);
-//        userService.create(user2);
+        User user2 = User.builder()
+                .email("jelinski93@gmail.com")
+                .password(getBCryptPasswordEncoder().encode("admin123"))
+                .build();
+        userService.create(user2);
+
+        user2.setRoles(Set.of(roleService.readRoleById(2L)));
+        userService.create(user2);
 
     }
 

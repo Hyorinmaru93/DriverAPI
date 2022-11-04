@@ -2,6 +2,7 @@ package pl.hyorinmaru.driver.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,27 +10,25 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.hyorinmaru.driver.dto.AuthRequest;
 import pl.hyorinmaru.driver.dto.AuthResponse;
 import pl.hyorinmaru.driver.model.User;
+import pl.hyorinmaru.driver.service.UserService;
 
 import java.util.stream.Collectors;
 
 @RestController
-public class UserApi {
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
 
     private final AuthenticationManager authorizationManager;
 
-    public UserApi(AuthenticationManager authorizationManager) {
-        this.authorizationManager = authorizationManager;
-    }
+    private final UserService userService;
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> getJwt(@RequestBody AuthRequest authRequest) {
-
         try {
             Authentication authenticate = authorizationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -48,6 +47,21 @@ public class UserApi {
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
     }
+
+    @GetMapping("/registry")
+    public ResponseEntity<?> registry(@RequestBody AuthRequest authRequest){
+        if (userService.isAlreadyRegistred(authRequest.getEmail())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("User with that email already exists!");
+        }
+
+        //toDo rejestracja
+
+
+        return ResponseEntity.ok(String.format("User %s was registred", authRequest.getEmail()));
+    }
+
+
 }

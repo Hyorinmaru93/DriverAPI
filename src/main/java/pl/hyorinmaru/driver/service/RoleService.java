@@ -1,6 +1,8 @@
 package pl.hyorinmaru.driver.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.hyorinmaru.driver.model.Role;
 import pl.hyorinmaru.driver.repository.RoleRepo;
@@ -18,7 +20,12 @@ public class RoleService {
     }
 
     public Role readRoleByName(String name){
-        return roleRepo.findByName(name).orElse(roleRepo.findByName("ROLE_USER").get());
+        return roleRepo.findByName(name).orElseThrow(() ->
+                new ResourceNotFoundException(String.format("Role with name %s was not found", name)));
+    }
+
+    public Role readRoleById(Long id){
+        return roleRepo.findById(id).get();
     }
 
 }
