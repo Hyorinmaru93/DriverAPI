@@ -14,6 +14,8 @@ public interface UserService extends UserDetailsService {
 
     User readByEmail(String email);
 
+    Optional<User> readByEmailOpt(String email);
+
     List<User> readAll();
 
     User update(User user);

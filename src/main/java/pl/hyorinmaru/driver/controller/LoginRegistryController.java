@@ -30,8 +30,6 @@ public class LoginRegistryController {
     private final UserServiceImplementation userServiceImplementation;
     private final RoleServiceImplementation roleServiceImplementation;
 
-    private final PasswordEncoder bCryptPasswordEncoder;
-
     @PostMapping("/login")
     public ResponseEntity<?> getJwt(@RequestBody AuthRequest authRequest) {
         try {
@@ -71,7 +69,7 @@ public class LoginRegistryController {
         userServiceImplementation.create(
                 User.builder()
                         .email(authRequest.getEmail())
-                        .password(bCryptPasswordEncoder.encode(authRequest.getPassword()))
+                        .password(authRequest.getPassword())
                         .points(0)
                         .roles(Set.of(roleServiceImplementation.readRoleById(1L)))
                         .build()
