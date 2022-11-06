@@ -19,10 +19,9 @@ import pl.hyorinmaru.driver.filter.JwtTokenFilter;
 import pl.hyorinmaru.driver.model.Role;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.repository.UserRepo;
-import pl.hyorinmaru.driver.service.RoleService;
-import pl.hyorinmaru.driver.service.UserService;
+import pl.hyorinmaru.driver.service.implementation.RoleServiceImplementation;
+import pl.hyorinmaru.driver.service.implementation.UserServiceImplementation;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Configuration
@@ -31,11 +30,11 @@ public class SecurityConfig {
 
     private final UserRepo userRepo;
 
-    private final UserService userService;
+    private final UserServiceImplementation userServiceImplementation;
 
     private final JwtTokenFilter jwtTokenFilter;
 
-    private final RoleService roleService;
+    private final RoleServiceImplementation roleServiceImplementation;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,7 +43,7 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/**").permitAll()
                 .antMatchers("/hej").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
@@ -72,30 +71,24 @@ public class SecurityConfig {
     @EventListener(ApplicationReadyEvent.class)
     public void createUser() {
 
-        Role user = new Role();
-        user.setName(Role.Type.ROLE_USER);
-        Role admin = new Role();
-        admin.setName(Role.Type.ROLE_ADMIN);
-        roleService.create(user);
-        roleService.create(admin);
+        roleServiceImplementation.create(Role.builder().name(Role.Type.ROLE_USER).build());
+        roleServiceImplementation.create(Role.builder().name(Role.Type.ROLE_ADMIN).build());
 
-        User user1 = User.builder()
+        userServiceImplementation.create(
+                User.builder()
                 .email("pendrakar@gmail.com")
-                .password(getBCryptPasswordEncoder().encode("user123"))
-                .build();
-        userService.create(user1);
+                .password("user123")
+                .roles(Set.of(roleServiceImplementation.readRoleById(1L)))
+                .build()
+        );
 
-        user1.setRoles(Set.of(roleService.readRoleById(1L)));
-        userService.create(user1);
-
-        User user2 = User.builder()
+        userServiceImplementation.create(
+                User.builder()
                 .email("jelinski93@gmail.com")
-                .password(getBCryptPasswordEncoder().encode("admin123"))
-                .build();
-        userService.create(user2);
-
-        user2.setRoles(Set.of(roleService.readRoleById(2L)));
-        userService.create(user2);
+                .password("admin123")
+                .roles(roleServiceImplementation.readAllRoles())
+                .build()
+        );
 
     }
 

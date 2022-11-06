@@ -1,29 +1,22 @@
 package pl.hyorinmaru.driver.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import pl.hyorinmaru.driver.model.User;
-import pl.hyorinmaru.driver.repository.RoleRepo;
-import pl.hyorinmaru.driver.repository.UserRepo;
 
+import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService extends UserDetailsService {
 
-    private final UserRepo userRepo;
+    void create(User user);
 
-    private final RoleRepo roleRepo;
+    User readById(Long id);
 
-    @Transactional
-    public void create(User user) {
-        userRepo.save(user);
-    }
+    User readByEmail(String email);
 
-    public Boolean isAlreadyRegistred(String email) {
-        return userRepo.existsByEmail(email);
-    }
+    List<User> readAll();
 
+    User update(User user);
+
+    void deleteById(Long id);
 }
