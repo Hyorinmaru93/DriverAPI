@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,10 @@ import java.util.stream.Stream;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
+
+    @Value("${app.security.jwt.secret}")
+    private String secret;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
@@ -36,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     public UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(String token) {
 
-        Algorithm algorithm = Algorithm.HMAC256("secret");
+        Algorithm algorithm = Algorithm.HMAC256(secret);
         JWTVerifier verifier = JWT.require(algorithm)
                 .withIssuer("Hyorinmaru")
                 .build();

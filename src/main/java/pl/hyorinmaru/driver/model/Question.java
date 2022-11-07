@@ -1,18 +1,19 @@
 package pl.hyorinmaru.driver.model;
 
 import lombok.*;
-import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "answers")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Answer {
+@Table(name = "questions")
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +21,11 @@ public class Answer {
 
     private String content;
 
-    private boolean isCorrect;
+    @OneToMany(
+            mappedBy = "question",
+            fetch = FetchType.EAGER
+    )
+    private List<Answer> answers = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "question_id", referencedColumnName = "id")
-    @JsonIgnore
-    private Question question;
+
 }

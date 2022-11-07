@@ -3,6 +3,7 @@ package pl.hyorinmaru.driver.controller;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +11,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import pl.hyorinmaru.driver.dto.AuthRequest;
-import pl.hyorinmaru.driver.dto.AuthResponse;
+import pl.hyorinmaru.driver.payload.authorization.AuthRequest;
+import pl.hyorinmaru.driver.payload.authorization.AuthResponse;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.service.implementation.RoleServiceImplementation;
 import pl.hyorinmaru.driver.service.implementation.UserServiceImplementation;
@@ -24,11 +24,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class LoginRegistryController {
+public class AuthorizationController {
 
     private final AuthenticationManager authorizationManager;
     private final UserServiceImplementation userServiceImplementation;
     private final RoleServiceImplementation roleServiceImplementation;
+
+    @Value("${app.security.jwt.secret}")
+    private String secret;
 
     @PostMapping("/login")
     public ResponseEntity<?> getJwt(@RequestBody AuthRequest authRequest) {
@@ -38,7 +41,7 @@ public class LoginRegistryController {
 
             User user = (User) authenticate.getPrincipal();
 
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withSubject(user.getUsername())
                     .withIssuer("Hyorinmaru")

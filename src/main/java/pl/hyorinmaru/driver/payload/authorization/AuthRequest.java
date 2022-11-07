@@ -1,4 +1,4 @@
-package pl.hyorinmaru.driver.dto;
+package pl.hyorinmaru.driver.payload.authorization;
 
 import lombok.Getter;
 import lombok.Setter;

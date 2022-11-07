@@ -5,14 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.hyorinmaru.driver.model.User;
 import pl.hyorinmaru.driver.repository.UserRepo;
 import pl.hyorinmaru.driver.service.UserService;
 
-import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,14 +34,14 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User readById(Long id) {
         return repository.findById(id).orElseThrow(() ->
-                new ResolutionException(String.format("User with id %s was not found", id))
+                new UsernameNotFoundException(String.format("User with id %s was not found", id))
         );
     }
 
     @Override
     public User readByEmail(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
-                new ResolutionException(String.format("User with email %s was not found", email))
+                new UsernameNotFoundException(String.format("User with email %s was not found", email))
         );
     }
 
@@ -75,7 +73,6 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("Cokolwiek");
         return readByEmail(username);
     }
 
